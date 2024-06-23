@@ -9,45 +9,49 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.restapi.react.reactapi.todo.repository.TodoRepo;
+
 import org.springframework.web.bind.annotation.PostMapping;
 
-//@RestController
-public class TodoResource {
+@RestController
+public class TodoJpaResource {
 
-    private TodoService todoService;
+    private TodoRepo todoRepo;
 
-    public TodoResource(TodoService todoService) {
-        this.todoService = todoService;
+    public TodoJpaResource(TodoRepo todoRepo) {
+        this.todoRepo = todoRepo;
     }
 
     @GetMapping(path = "users/{username}/todos")
     public List<Todo> retriveTodos(@PathVariable String username) {
-        return todoService.findByUsername(username);
+        return todoRepo.findByUsername(username);
     }
 
     @GetMapping(path = "users/{username}/todos/{id}")
     public Todo retriveTodo(@PathVariable String username, @PathVariable int id) {
-        return todoService.findById(id);
+        return todoRepo.findById(id).get();
     }
 
     @DeleteMapping(path = "users/{username}/todos/{id}")
     public ResponseEntity<Void> deleteTodo(@PathVariable String username, @PathVariable int id) {
-        todoService.deleteById(id);
+        todoRepo.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping(path = "users/{username}/todos/{id}")
     public Todo updateTodo(@PathVariable String username,
             @PathVariable int id, @RequestBody Todo todo) {
-        todoService.updateTodo(todo);
+        todoRepo.save(todo);
         return todo;
     }
 
     @PostMapping(path = "users/{username}/todos")
     public Todo createTodo(@PathVariable String username,
             @RequestBody Todo todo) {
-        Todo createdTodo = todoService.addTodo(username, todo.getDescription(), todo.getTargetDate(), todo.isDone());
-        return createdTodo;
+        todo.setUsername(username);
+        todo.setId(null);
+        return todoRepo.save(todo);
     }
 
 }
