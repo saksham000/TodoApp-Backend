@@ -7,6 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HelloWorldController {
 	
+
+	@GetMapping(path = "/basicauth")
+	public String basicAuthCheck() {
+		return "Success Auth"; 
+	}
+
+
 	@GetMapping(path = "/hello-world")
 	public String helloWorld() {
 		return "Hello World from java"; 
