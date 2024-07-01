@@ -6,7 +6,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,8 +48,8 @@ public class JwtSecurityConfig {
         // https://github.com/spring-projects/spring-security/issues/12310
         return httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/authenticate").permitAll()
-                        .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT
+                        .requestMatchers("/","/authenticate").permitAll()
+                        // .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console is a servlet and NOT
                                                                                 // recommended for a production
                         .requestMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
@@ -60,12 +58,11 @@ public class JwtSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(
-                        OAuth2ResourceServerConfigurer::jwt)
+                    oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .httpBasic(
                         Customizer.withDefaults())
-                .headers(header -> {
-                    header.frameOptions().sameOrigin();
-                })
+                .headers(header ->
+                header.frameOptions(frameOptionsConfig -> frameOptionsConfig.sameOrigin()) )
                 .build();
     }
 

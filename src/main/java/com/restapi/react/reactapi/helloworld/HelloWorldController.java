@@ -6,26 +6,29 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloWorldController {
-	
 
 	@GetMapping(path = "/basicauth")
 	public String basicAuthCheck() {
-		return "Success Auth"; 
+		return "Success Auth";
 	}
 
+	@GetMapping(path = "/")
+	public String returnSomethingAtRootUrl() {
+		return "Congratulations!";
+	}
 
 	@GetMapping(path = "/hello-world")
 	public String helloWorld() {
-		return "Hello World from java"; 
+		return "Hello World from java";
 	}
-	
+
 	@GetMapping(path = "/hello-world-bean")
 	public HelloWorldBean helloWorldBean() {
-		return new HelloWorldBean("Hello World Bean"); 
+		return new HelloWorldBean("Hello World Bean");
 	}
-	
+
 	@GetMapping(path = "/hello-world/path-variable/{name}")
 	public HelloWorldBean helloWorldPathVariable(@PathVariable String name) {
-		return new HelloWorldBean(String.format("Hello World, %s", name)); 
-	}	
+		return new HelloWorldBean(String.format("Hello World, %s", name));
+	}
 }
